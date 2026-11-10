@@ -18,9 +18,3 @@ export interface MagnitudeRange {
   from: number
   to: number
 }
-
-// Ответ API-слоя: данные и признак, что они взяты из mock
-export interface Loaded<T> {
-  data: T
-  fromMock: boolean
-}

@@ -1,12 +1,13 @@
 import type { Galaxy } from './types'
 
-// Mock-коллекция галактик: используется, когда веб-сервис недоступен.
-// У части галактик нет фото и видео (null) — для них показываются файлы по умолчанию.
+// Mock-коллекция галактик — единственный источник данных в ЛР5.
+// Фото NGC 1300 и NGC 5128 лежат в проекте (public/mock); у остальных галактик
+// фото и видео пустые (null) — для них показываются файлы по умолчанию.
 export const GALAXIES_MOCK: Galaxy[] = [
   {
     id: 1, title: 'NGC 1300', supernova: 'SN 2002fk', apparent_magnitude: 12.8, distance_mpc: 18.5,
     description: 'Спиральная галактика с перемычкой в созвездии Эридан',
-    image_url: 'http://localhost:9000/galaxies.media/ngc1300.jpg', video_url: null,
+    image_url: '/mock/ngc1300.jpg', video_url: null,
     likes_count: 3, is_liked: 0, is_mine: 0,
   },
   {
@@ -24,7 +25,7 @@ export const GALAXIES_MOCK: Galaxy[] = [
   {
     id: 4, title: 'NGC 5128 (Центавр A)', supernova: 'SN 1986G', apparent_magnitude: 11.4, distance_mpc: 3.8,
     description: 'Линзовидная галактика, мощный радиоисточник',
-    image_url: 'http://localhost:9000/galaxies.media/ngc5128.gif', video_url: null,
+    image_url: '/mock/ngc5128.jpg', video_url: null,
     likes_count: 2, is_liked: 0, is_mine: 0,
   },
   {

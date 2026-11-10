@@ -1,31 +1,32 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Badge, Button, Spinner } from 'react-bootstrap'
+import { Button, Spinner } from 'react-bootstrap'
 import type { Galaxy } from '../types'
 import { getFeed } from '../api/galaxies'
 import { imageOf, onImageError, onVideoError, videoOf } from '../media'
 import { HeartIcon } from '../components/Icons'
 
+// Страница «Лента»: одна галактика на весь экран, справа параметры и кнопка «Следующая»
 export default function FeedPage() {
-  const { id } = useParams()             
+  const { id } = useParams()              // /feed/:id — какую галактику открыть
   const navigate = useNavigate()
   const [galaxy, setGalaxy] = useState<Galaxy | null>(null)
-  const [fromMock, setFromMock] = useState(false)
   const [loading, setLoading] = useState(true)
 
+  // при смене id в адресе загружаем галактику: без id — первую в ленте
   useEffect(() => {
     setLoading(true)
-    getFeed(id ? Number(id) : undefined).then(result => {
-      setGalaxy(result.data)
-      setFromMock(result.fromMock)
+    getFeed(id ? Number(id) : undefined).then(item => {
+      setGalaxy(item)
       setLoading(false)
     })
   }, [id])
 
+  // стрелка «Следующая»: следующая опубликованная галактика (по кругу)
   const showNext = async () => {
     if (!galaxy) return
-    const result = await getFeed(galaxy.id, true)
-    if (result.data) navigate(`/feed/${result.data.id}`)
+    const nextGalaxy = await getFeed(galaxy.id, true)
+    if (nextGalaxy) navigate(`/feed/${nextGalaxy.id}`)
   }
 
   if (loading) return <div className="feed-empty"><Spinner animation="border" /></div>
@@ -40,8 +41,6 @@ export default function FeedPage() {
           ? <img key={galaxy.id} className="feed-media" src={imageOf(galaxy.image_url)} onError={onImageError} alt={galaxy.title} />
           : <video key={galaxy.id} className="feed-media" src={videoOf(null)} autoPlay muted loop playsInline />}
       <div className="feed-shade" />
-
-      {fromMock && <Badge bg="secondary" className="feed-mock">mock</Badge>}
 
       <aside className="feed-side">
         {/* лайк доступен только после входа — для гостя кнопка неактивна */}

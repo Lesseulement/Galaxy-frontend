@@ -1,14 +1,18 @@
 import { Button, Card, Form } from 'react-bootstrap'
 import type { MagnitudeRange } from '../types'
 
+// Пропсы фильтра: границы слайдеров, текущий диапазон и обработчики
 interface Props {
-  min: number                                
-  max: number                                
-  value: MagnitudeRange                     
-  onChange: (value: MagnitudeRange) => void  
-  onSearch: () => void                       
+  min: number                                // левая граница слайдеров
+  max: number                                // правая граница слайдеров
+  value: MagnitudeRange                      // выбранный диапазон «от» – «до»
+  onChange: (value: MagnitudeRange) => void  // слайдер передвинули
+  onSearch: () => void                       // нажали «Найти»
 }
+
+// Фильтр плитки по видимой звёздной величине: два слайдера и кнопка «Найти»
 export default function MagnitudeFilter({ min, max, value, onChange, onSearch }: Props) {
+  // слайдеры не дают «от» стать больше «до»
   const setFrom = (from: number) => onChange({ from: Math.min(from, value.to), to: value.to })
   const setTo = (to: number) => onChange({ from: value.from, to: Math.max(to, value.from) })
 

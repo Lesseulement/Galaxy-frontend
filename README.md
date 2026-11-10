@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Приложение: http://localhost:3000
+Приложение: http://127.0.0.1:3000
 
 ## Страницы
 
@@ -47,9 +47,10 @@ npm run dev
 
 ## Данные
 
-`src/api/galaxies.ts` сначала обращается к веб-сервису (`GET /api/galaxies`, `GET /api/galaxies/feed`,
-Vite перенаправляет `/api` на `http://127.0.0.1:8001`). Если веб-сервис не отвечает, данные берутся
-из mock-коллекции `src/mock.ts` с той же фильтрацией; на странице видна пометка «mock».
+В ЛР5 все данные берутся из mock-коллекции `src/mock.ts` — без бэкенда, БД и S3.
+`src/api/galaxies.ts` возвращает галактики из этой коллекции с той же фильтрацией, что и веб-сервис
+(асинхронные функции `getGalaxies` и `getFeed` — в ЛР6 они будут обращаться к API).
+Фото двух галактик лежат в проекте (`public/mock`), у остальных фото пустое — показывается файл по умолчанию.
 
 ## Структура
 
@@ -60,7 +61,7 @@ src/
   types.ts                  тип Galaxy, MagnitudeRange
   mock.ts                   mock-коллекция галактик
   media.ts                  фото и видео по умолчанию
-  api/galaxies.ts           запросы к веб-сервису с переходом на mock
+  api/galaxies.ts           получение галактик из mock-коллекции
   pages/GalaxiesPage.tsx    страница «Плитка»
   pages/FeedPage.tsx        страница «Лента»
   components/MagnitudeFilter.tsx   фильтр по видимой звёздной величине
@@ -68,13 +69,14 @@ src/
   components/BottomNav.tsx         нижнее меню из 4 пунктов
   components/Icons.tsx             иконки
   assets/default.jpg, default.mp4  фото и видео по умолчанию
+public/mock/                фото галактик для mock-коллекции
 ```
 
 ## Хуки
 
 | Хук | Где | Зачем |
 |---|---|---|
-| `useState` | `GalaxiesPage`, `FeedPage` | диапазон фильтра, список галактик, текущая галактика, признак mock, загрузка |
+| `useState` | `GalaxiesPage`, `FeedPage` | диапазон фильтра, список галактик, текущая галактика, загрузка |
 | `useEffect` | `GalaxiesPage` | загрузить список при открытии страницы |
 | `useEffect` | `FeedPage` | загрузить галактику при смене `id` в адресе |
 | `useParams` | `FeedPage` | взять `id` из адреса `/feed/:id` |
