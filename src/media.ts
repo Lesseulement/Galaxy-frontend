@@ -5,11 +5,14 @@ import defaultVideo from './assets/default.mp4'
 
 export { defaultImage, defaultVideo }
 
-// Если у галактики нет фото/видео (поле пустое) — берём файл по умолчанию
-export const imageOf = (url: string | null): string => url || defaultImage
-export const videoOf = (url: string | null): string => url || defaultVideo
+// Ссылки на MinIO (http://localhost:9000/...) идут через 2-й маршрут прокси Vite: /s3/...
+const viaProxy = (url: string) => url.replace(/^https?:\/\/(localhost|127\.0\.0\.1):9000/, '/s3')
 
-// Если файл по ссылке не загрузился (например, S3 выключен) — тоже подставляем файл по умолчанию
+// Если у галактики нет фото/видео (поле пустое) — берём файл по умолчанию
+export const imageOf = (url: string | null): string => (url ? viaProxy(url) : defaultImage)
+export const videoOf = (url: string | null): string => (url ? viaProxy(url) : defaultVideo)
+
+// Если файл по ссылке не загрузился — тоже подставляем файл по умолчанию
 export const onImageError = (e: SyntheticEvent<HTMLImageElement>) => {
   if (!e.currentTarget.src.endsWith(defaultImage)) e.currentTarget.src = defaultImage
 }

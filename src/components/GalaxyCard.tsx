@@ -1,18 +1,26 @@
-import { Card } from 'react-bootstrap'
+import { Button, Card } from 'react-bootstrap'
 import type { Galaxy } from '../types'
 import { imageOf, onImageError } from '../media'
-import { HeartIcon } from './Icons'
+import { HeartIcon, TrashIcon } from './Icons'
 
-// Пропсы карточки: галактика и обработчик нажатия
+// Пропсы карточки: галактика, переход в ленту и (для своих галактик) удаление
 interface Props {
   galaxy: Galaxy
   onOpen: (id: number) => void
+  onDelete?: (id: number) => void
 }
 
 // Карточка галактики на плитке
-export default function GalaxyCard({ galaxy, onOpen }: Props) {
+export default function GalaxyCard({ galaxy, onOpen, onDelete }: Props) {
   return (
     <Card className="tile h-100" onClick={() => onOpen(galaxy.id)}>
+      {/* кнопка «Удалить» — только у своих галактик после входа */}
+      {onDelete && (
+        <Button className="tile-delete" aria-label="Удалить"
+          onClick={e => { e.stopPropagation(); onDelete(galaxy.id) }}>
+          <TrashIcon />
+        </Button>
+      )}
       {/* нет фото или оно не загрузилось — фото по умолчанию */}
       <Card.Img variant="top" src={imageOf(galaxy.image_url)} onError={onImageError} alt={galaxy.title} />
       <Card.Body className="p-2">

@@ -1,4 +1,4 @@
-// Иконки нижнего меню и сердечка (SVG)
+// Иконки нижнего меню, сердечка и кнопки «Удалить» (SVG)
 export const FeedIcon = () => (
   <svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="m10 9 5 3-5 3z" /></svg>
 )
@@ -10,6 +10,12 @@ export const GridIcon = () => (
 )
 export const LoginIcon = () => (
   <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21c1-4 4-6 8-6s7 2 8 6" /></svg>
+)
+export const LogoutIcon = () => (
+  <svg viewBox="0 0 24 24"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M9 8l-4 4 4 4M5 12h11" /></svg>
+)
+export const TrashIcon = () => (
+  <svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg>
 )
 export const HeartIcon = ({ filled }: { filled: boolean }) => (
   <svg viewBox="0 0 24 24" className={filled ? 'heart is-filled' : 'heart'}>

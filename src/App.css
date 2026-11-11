@@ -85,3 +85,30 @@ body { background: var(--page); }
 .bottom-nav .tab svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linejoin: round; }
 .bottom-nav .tab.active { color: var(--gold); }
 .bottom-nav .tab.disabled { color: #6b6b6b; }
+
+/* анимация загрузки: перекрывает страницу и меню, кнопки заблокированы */
+.loader {
+  position: fixed; inset: 0; z-index: 2000;
+  display: grid; place-items: center;
+  background: rgba(0, 0, 0, .45);
+}
+.loader-spinner { width: 48px; height: 48px; color: var(--gold); }
+
+/* кнопка «Удалить» на карточке */
+.tile { position: relative; }
+.tile-delete {
+  position: absolute; top: 6px; right: 6px; z-index: 1;
+  width: 32px; height: 32px; padding: 0; border-radius: 50%;
+  display: grid; place-items: center;
+  background: rgba(0, 0, 0, .6) !important; border: 0 !important;
+}
+.tile-delete svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; }
+
+/* формы «Добавление» и «Вход» (макет ЛР1) */
+.group { display: block; margin-bottom: 12px; }
+.label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+.field, .field:focus { background: var(--tile); border: 0; color: #fff; }
+.preview { background: var(--tile); border-radius: 8px; overflow: hidden; }
+.preview-media { display: block; width: 100%; height: 160px; object-fit: cover; }
+.error-text { color: var(--red); font-size: 14px; }
+.bottom-nav button.tab { background: none; border: 0; }

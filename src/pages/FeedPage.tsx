@@ -1,36 +1,43 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Button, Spinner } from 'react-bootstrap'
-import type { Galaxy } from '../types'
-import { getFeed } from '../api/galaxies'
+import { Button } from 'react-bootstrap'
 import { imageOf, onImageError, onVideoError, videoOf } from '../media'
 import { HeartIcon } from '../components/Icons'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { fetchFeedGalaxy, likeGalaxy } from '../store/galaxiesSlice'
 
-// Страница «Лента»: одна галактика на весь экран, справа параметры и кнопка «Следующая»
+// Страница «Лента»: одна галактика на весь экран, справа лайк, параметры и кнопка «Следующая»
 export default function FeedPage() {
   const { id } = useParams()              // /feed/:id — какую галактику открыть
   const navigate = useNavigate()
-  const [galaxy, setGalaxy] = useState<Galaxy | null>(null)
-  const [loading, setLoading] = useState(true)
+  const dispatch = useAppDispatch()
+  const { current: galaxy, loading, error } = useAppSelector(state => state.galaxies)
+  const user = useAppSelector(state => state.auth.user)
+  const alreadyLoaded = useRef(false)     // следующая галактика уже получена кнопкой «›»
 
   // при смене id в адресе загружаем галактику: без id — первую в ленте
   useEffect(() => {
-    setLoading(true)
-    getFeed(id ? Number(id) : undefined).then(item => {
-      setGalaxy(item)
-      setLoading(false)
-    })
-  }, [id])
+    if (alreadyLoaded.current) { alreadyLoaded.current = false; return }
+    dispatch(fetchFeedGalaxy({ id: id ? Number(id) : undefined }))
+  }, [dispatch, id, user])
 
   // стрелка «Следующая»: следующая опубликованная галактика (по кругу)
   const showNext = async () => {
     if (!galaxy) return
-    const nextGalaxy = await getFeed(galaxy.id, true)
-    if (nextGalaxy) navigate(`/feed/${nextGalaxy.id}`)
+    const result = await dispatch(fetchFeedGalaxy({ id: galaxy.id, next: true }))
+    const nextGalaxy = fetchFeedGalaxy.fulfilled.match(result) ? result.payload : null
+    if (nextGalaxy && nextGalaxy.id !== galaxy.id) {
+      alreadyLoaded.current = true
+      navigate(`/feed/${nextGalaxy.id}`)
+    }
   }
 
-  if (loading) return <div className="feed-empty"><Spinner animation="border" /></div>
-  if (!galaxy) return <div className="feed-empty">В ленте пока нет галактик</div>
+  // сердечко: доступно только после входа
+  const toggleLike = () => {
+    if (galaxy) dispatch(likeGalaxy({ id: galaxy.id, like: galaxy.is_liked === 1 ? 0 : 1 }))
+  }
+
+  if (!galaxy) return <div className="feed-empty">{loading ? '' : error ?? 'В ленте пока нет галактик'}</div>
 
   return (
     <div className="feed">
@@ -43,8 +50,8 @@ export default function FeedPage() {
       <div className="feed-shade" />
 
       <aside className="feed-side">
-        {/* лайк доступен только после входа — для гостя кнопка неактивна */}
-        <Button variant="link" className="side-btn" disabled title="Доступно после входа">
+        <Button variant="link" className="side-btn" disabled={!user} onClick={toggleLike}
+          title={user ? 'Лайк' : 'Доступно после входа'}>
           <HeartIcon filled={galaxy.is_liked === 1} />
         </Button>
         <span className="side-value">{galaxy.likes_count}</span>
