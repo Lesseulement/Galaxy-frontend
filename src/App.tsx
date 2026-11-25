@@ -12,7 +12,8 @@ export default function App() {
   const loading = useAppSelector(state => state.galaxies.loading)
 
   return (
-    <BrowserRouter>
+    // basename — название репозитория: на GitHub Pages приложение лежит в /Galaxy-frontend/
+    <BrowserRouter basename="/Galaxy-frontend">
       <div className="app">
         <Routes>
           <Route path="/" element={<Navigate to="/galaxies" replace />} />

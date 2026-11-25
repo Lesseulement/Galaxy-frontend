@@ -49,24 +49,27 @@ export default function AddPage() {
   }
 
   return (
-    <Container className="page">
+    <Container className="page form-page">
       <h1 className="page-title">Регистрация сверхновой</h1>
 
       {!draft ? (
         <Form key="step-next" onSubmit={handleNext}>
-          <div className="group">
-            <span className="label">Фото</span>
-            <div className="preview mb-2"><img className="preview-media" src={imagePreview} alt="Фото" /></div>
-            <Form.Control className="field" type="file" accept="image/*" required
-              onChange={e => setImage((e.target as HTMLInputElement).files?.[0] ?? null)} />
-          </div>
-          <div className="group">
-            <span className="label">Видео</span>
-            <div className="preview mb-2">
-              <video key={videoPreview} className="preview-media" src={videoPreview} autoPlay muted loop playsInline />
+          {/* адаптивность: фото и видео в один столбец на телефоне, в два — от 768px */}
+          <div className="media-row">
+            <div className="group">
+              <span className="label">Фото</span>
+              <div className="preview mb-2"><img className="preview-media" src={imagePreview} alt="Фото" /></div>
+              <Form.Control className="field" type="file" accept="image/*" required
+                onChange={e => setImage((e.target as HTMLInputElement).files?.[0] ?? null)} />
             </div>
-            <Form.Control className="field" type="file" accept="video/*" required
-              onChange={e => setVideo((e.target as HTMLInputElement).files?.[0] ?? null)} />
+            <div className="group">
+              <span className="label">Видео</span>
+              <div className="preview mb-2">
+                <video key={videoPreview} className="preview-media" src={videoPreview} autoPlay muted loop playsInline />
+              </div>
+              <Form.Control className="field" type="file" accept="video/*" required
+                onChange={e => setVideo((e.target as HTMLInputElement).files?.[0] ?? null)} />
+            </div>
           </div>
           <label className="group"><span className="label">Название</span>
             <Form.Control className="field" value={title} onChange={e => setTitle(e.target.value)} required />
@@ -76,16 +79,19 @@ export default function AddPage() {
         </Form>
       ) : (
         <Form key="step-publish" onSubmit={handlePublish}>
-          <div className="group">
-            <span className="label">Фото</span>
-            <div className="preview">
-              <img className="preview-media" src={imageOf(draft.image_url)} onError={onImageError} alt={draft.title} />
+          {/* адаптивность: фото и видео в один столбец на телефоне, в два — от 768px */}
+          <div className="media-row">
+            <div className="group">
+              <span className="label">Фото</span>
+              <div className="preview">
+                <img className="preview-media" src={imageOf(draft.image_url)} onError={onImageError} alt={draft.title} />
+              </div>
             </div>
-          </div>
-          <div className="group">
-            <span className="label">Видео</span>
-            <div className="preview">
-              <video className="preview-media" src={videoOf(draft.video_url)} onError={onVideoError} autoPlay muted loop playsInline />
+            <div className="group">
+              <span className="label">Видео</span>
+              <div className="preview">
+                <video className="preview-media" src={videoOf(draft.video_url)} onError={onVideoError} autoPlay muted loop playsInline />
+              </div>
             </div>
           </div>
           <label className="group"><span className="label">Название</span>

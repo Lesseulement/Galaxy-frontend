@@ -23,6 +23,9 @@ type ThunkConfig = { state: RootState; rejectValue: string }
 const status = (e: unknown) => (axios.isAxiosError(e) ? e.response?.status : undefined)
 
 // ---------- mock-коллекция: только для гостя, когда веб-сервис недоступен ----------
+// На GitHub Pages бэкенда нет — там приложение работает только с mock-коллекцией
+const MOCK_ONLY = window.location.hostname.endsWith('github.io')
+
 const mockList = (from: number, to: number) =>
   [...GALAXIES_MOCK]
     .sort((a, b) => a.id - b.id)
@@ -42,6 +45,7 @@ export const fetchGalaxies = createAsyncThunk<Galaxy[], void, ThunkConfig>(
   'galaxies/fetchGalaxies',
   async (_, { getState, rejectWithValue }) => {
     const { filter, auth } = getState()
+    if (MOCK_ONLY) return mockList(filter.magnitudeFrom, filter.magnitudeTo)
     try {
       const response = await api.galaxies.listGalaxiesApiGalaxiesGet({
         magnitude_from: filter.magnitudeFrom,
@@ -59,6 +63,7 @@ export const fetchGalaxies = createAsyncThunk<Galaxy[], void, ThunkConfig>(
 export const fetchFeedGalaxy = createAsyncThunk<Galaxy | null, { id?: number; next?: boolean }, ThunkConfig>(
   'galaxies/fetchFeedGalaxy',
   async ({ id, next = false }, { getState, rejectWithValue }) => {
+    if (MOCK_ONLY) return mockFeed(id, next)
     try {
       const response = await api.galaxies.feedApiGalaxiesFeedGet({ id, next })
       return response.data

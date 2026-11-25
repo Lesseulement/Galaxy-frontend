@@ -31,7 +31,8 @@ export default function GalaxiesPage() {
       {!loading && list.length === 0
         ? <p className="empty">Ничего не найдено. Попробуйте изменить фильтр.</p>
         : (
-          <Row xs={2} className="g-3">
+          // адаптивность: колонок 2 на телефоне (< 576px), 3 на планшете (≥ 576px), 4 на компьютере (≥ 992px)
+          <Row xs={2} sm={3} lg={4} className="g-3">
             {list.map(g => (
               <Col key={g.id}>
                 <GalaxyCard

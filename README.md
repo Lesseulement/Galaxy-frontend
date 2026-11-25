@@ -1,20 +1,64 @@
-# ЛР6. Фронтенд «Галактики»: Redux Toolkit, авторизация, axios и кодогенерация
+# ЛР7. Фронтенд «Галактики»: адаптивность, PWA, GitHub Pages, HTTPS
 
 Определение расстояния до галактики по сверхновым типа Ia.
-SPA на React + TypeScript + Vite + React-Bootstrap. Данные — из веб-сервиса (ЛР4) через прокси Vite.
+SPA на React + TypeScript + Vite + React-Bootstrap + Redux Toolkit. Данные — из веб-сервиса (ЛР4) через реверс-прокси Vite.
+
+GitHub Pages (только mock): https://lesseulement.github.io/Galaxy-frontend/
 
 ## Запуск
 
 1. Бэкенд (папка `galaxy`): `docker compose up -d`, затем `uvicorn main:app --reload --port 8001`.
-2. Фронтенд:
+2. Сертификат для HTTPS (один раз, в папке фронтенда; IP ноутбука — свой):
+
+```bash
+npx mkcert create-ca
+npx mkcert create-cert --domains localhost 127.0.0.1 192.168.0.101
+```
+
+Появятся `ca.crt`, `ca.key`, `cert.crt`, `cert.key` (в git не попадают — `.gitignore`).
+
+3. Фронтенд:
 
 ```bash
 npm install
-npm run api   # кодогенерация src/api/Api.ts из http://127.0.0.1:8001/openapi.json
 npm run dev
 ```
 
-Приложение: http://127.0.0.1:3000
+Приложение: https://127.0.0.1:3000/Galaxy-frontend/ , с телефона в той же сети: https://IP-ноутбука:3000/Galaxy-frontend/
+
+## GitHub Pages
+
+```bash
+npm run build
+npm run deploy      # gh-pages -d dist — папка dist в ветку gh-pages
+```
+
+В репозитории: Settings → Pages → Deploy from a branch → `gh-pages` / root.
+На GitHub Pages бэкенда нет: на адресе `*.github.io` thunk-и сразу берут данные из mock-коллекции.
+
+| Настройка | Где | Значение |
+|---|---|---|
+| `base` | `vite.config.ts` | `/Galaxy-frontend/` |
+| `basename` | `App.tsx`, `BrowserRouter` | `/Galaxy-frontend` |
+| фото mock | `src/mock.ts` | `${import.meta.env.BASE_URL}mock/...` |
+
+## PWA
+
+`vite-plugin-pwa` (`vite.config.ts`): manifest (название «Галактики», `start_url` `/Galaxy-frontend/`, `display: standalone`, иконки `public/logo192.png`, `public/logo512.png`) и service worker (кэш страниц, скриптов, стилей, фото и видео — работает офлайн). Регистрация — `registerSW()` в `src/main.tsx`.
+
+## HTTPS и доступ с телефона
+
+`vite.config.ts`: `server.https` — ключ `cert.key` и сертификат `cert.crt`; `host: true` — сервер доступен по IP ноутбука. Телефон обращается к ноутбуку, реверс-прокси Vite пересылает `/api` веб-сервису (8001), `/s3` — в MinIO (9000).
+
+## Адаптивность (3 страницы)
+
+| Страница | Телефон < 576px | Планшет 576–991px | Компьютер ≥ 992px |
+|---|---|---|---|
+| Плитка | 2 колонки, фото 110px | 3 колонки, фото 140px | 4 колонки, фото 180px, фильтр до 560px |
+| Лента | фото/видео на весь экран | от 768px: карточка 720px по центру, заголовок 28px | так же |
+| Добавление | фото и видео в 1 столбец, превью 160px | от 768px: форма 720px, 2 столбца, превью 220px | так же |
+
+Колонки — `GalaxiesPage.tsx`: `<Row xs={2} sm={3} lg={4}>`; размеры — `src/App.css`, блок «АДАПТИВНОСТЬ».
 
 ## Прокси (обход CORS) — `vite.config.ts`
 
@@ -56,6 +100,10 @@ Thunk-и (`src/store/galaxiesSlice.ts`) вызывают сгенерирова�
 
 Только axios, без кодогенерации и thunk: `login` → `POST /api/users/login`, `logout` → `POST /api/users/logout`.
 Результат вручную передаётся в Redux (`LoginPage`, `BottomNav`).
+
+## Диаграмма развёртывания
+
+`reports/deployment_LR7.drawio`, `.png`.
 
 ## Структура
 

@@ -11,9 +11,8 @@
 
 body { background: var(--page); }
 
-/* приложение — «экран телефона» по центру */
+/* приложение на всю ширину экрана; ширину содержимого задаёт .container Bootstrap */
 .app {
-  max-width: 430px;
   min-height: 100vh;
   margin: 0 auto;
   background: var(--screen);
@@ -75,7 +74,7 @@ body { background: var(--page); }
 
 /* нижнее меню из 4 пунктов */
 .bottom-nav {
-  max-width: 430px; margin: 0 auto; height: 64px; padding: 0;
+  max-width: 600px; margin: 0 auto; height: 64px; padding: 0;
   background: var(--screen); border-top: 1px solid #2c2c2c;
 }
 .bottom-nav .tab {
@@ -112,3 +111,43 @@ body { background: var(--page); }
 .preview-media { display: block; width: 100%; height: 160px; object-fit: cover; }
 .error-text { color: var(--red); font-size: 14px; }
 .bottom-nav button.tab { background: none; border: 0; }
+
+/* =====================================================================
+   АДАПТИВНОСТЬ (ЛР7). Точки перехода как в Bootstrap:
+   телефон < 576px, планшет 576–991px, компьютер ≥ 992px.
+   Колонки плитки задаются в GalaxiesPage: <Row xs={2} sm={3} lg={4}>
+   ===================================================================== */
+
+/* --- Плитка: высота фото карточки --- */
+/* телефон: 2 колонки, фото 110px (правило .tile .card-img-top выше) */
+@media (min-width: 576px) {          /* планшет: 3 колонки, фото 140px */
+  .tile .card-img-top { height: 140px; }
+  .tile-title { font-size: 15px; }
+}
+@media (min-width: 992px) {          /* компьютер: 4 колонки, фото 180px */
+  .tile .card-img-top { height: 180px; }
+  .tile-title { font-size: 16px; }
+  .tile-meta, .tile-likes { font-size: 13px; }
+  .filter { max-width: 560px; }      /* фильтр не растягивается на всю ширину */
+}
+
+/* --- Лента --- */
+/* телефон: фото/видео на весь экран */
+@media (min-width: 768px) {          /* планшет и компьютер: карточка 720px по центру */
+  .feed, .feed-empty {
+    max-width: 720px; margin: 16px auto 0;
+    height: calc(100vh - 72px - 32px);
+    border-radius: 16px;
+  }
+  .feed-title { font-size: 28px; }
+  .feed-text { font-size: 16px; }
+}
+
+/* --- Добавление --- */
+/* телефон: фото и видео друг под другом, высота превью 160px */
+.media-row { display: grid; grid-template-columns: 1fr; gap: 0 16px; }
+@media (min-width: 768px) {          /* от 768px: форма 720px, фото и видео в 2 колонки, превью 220px */
+  .form-page { max-width: 720px; }
+  .media-row { grid-template-columns: 1fr 1fr; }
+  .preview-media { height: 220px; }
+}

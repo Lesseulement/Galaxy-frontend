@@ -31,7 +31,7 @@ export default function LoginPage() {
   }
 
   return (
-    <Container className="page">
+    <Container className="page form-page">
       <h1 className="page-title">Вход</h1>
       <Form onSubmit={handleSubmit}>
         <label className="group"><span className="label">Логин</span>

@@ -1,3 +1,8 @@
 node_modules
 dist
 *.local
+
+# сертификаты HTTPS (mkcert) — закрытые ключи не выкладывать в git
+*.key
+*.crt
+dev-dist
